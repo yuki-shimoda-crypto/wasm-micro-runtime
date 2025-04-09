@@ -10,6 +10,7 @@
 #include "wasm_loader.h"
 #include "wasm_memory.h"
 #include "../common/wasm_exec_env.h"
+#include "wasm_serialize_hook.h"
 #if WASM_ENABLE_GC != 0
 #include "../common/gc/gc_object.h"
 #include "mem_alloc.h"

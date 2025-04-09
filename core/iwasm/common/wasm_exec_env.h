@@ -19,6 +19,9 @@ extern "C" {
 struct WASMModuleInstanceCommon;
 struct WASMInterpFrame;
 
+/* シリアライズとの互換性のために追加 */
+typedef struct WASMExecEnv *wasm_exec_env_t;
+
 #if WASM_ENABLE_THREAD_MGR != 0
 typedef struct WASMCluster WASMCluster;
 #if WASM_ENABLE_DEBUG_INTERP != 0

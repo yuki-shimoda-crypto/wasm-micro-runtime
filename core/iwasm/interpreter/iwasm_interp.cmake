@@ -25,5 +25,10 @@ file (GLOB_RECURSE source_all
     ${IWASM_INTERP_DIR}/${INTERPRETER}
 )
 
+# add serialization hook files
+set (IWASM_SERIALIZE_HOOK_FILES
+    ${IWASM_INTERP_DIR}/wasm_serialize_hook.c)
+set (source_all ${source_all} ${IWASM_SERIALIZE_HOOK_FILES})
+
 set (IWASM_INTERP_SOURCE ${source_all})
 

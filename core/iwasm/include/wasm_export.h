@@ -2346,6 +2346,67 @@ wasm_runtime_shared_heap_malloc(wasm_module_inst_t module_inst, uint64_t size,
 WASM_RUNTIME_API_EXTERN void
 wasm_runtime_shared_heap_free(wasm_module_inst_t module_inst, uint64_t ptr);
 
+/**
+ * シリアライズコールバック関数の型定義
+ *
+ * @param exec_env 実行環境
+ * @param user_data コールバック用ユーザーデータ
+ *
+ * @return シリアライズを実行する場合はtrue
+ */
+typedef bool (*wasm_runtime_serialize_callback_f)(wasm_exec_env_t exec_env, void *user_data);
+
+/**
+ * シリアライズコールバックを登録
+ *
+ * @param exec_env 実行環境
+ * @param callback コールバック関数
+ * @param user_data コールバック用ユーザーデータ
+ *
+ * @return 成功した場合はtrue
+ */
+WASM_RUNTIME_API_EXTERN bool
+wasm_runtime_register_serialize_callback(wasm_exec_env_t exec_env,
+                                       wasm_runtime_serialize_callback_f callback,
+                                       void *user_data);
+
+/**
+ * シリアライズフックを有効/無効化
+ *
+ * @param exec_env 実行環境
+ * @param enable 有効化する場合はtrue
+ */
+WASM_RUNTIME_API_EXTERN void
+wasm_runtime_enable_serialize_hook(wasm_exec_env_t exec_env, bool enable);
+
+/**
+ * 実行状態をシリアライズ
+ *
+ * @param exec_env 実行環境
+ * @param buffer 出力バッファ
+ * @param buffer_size バッファサイズ
+ *
+ * @return 成功した場合はシリアライズされたデータのサイズ、失敗した場合は0
+ */
+WASM_RUNTIME_API_EXTERN uint32_t
+wasm_runtime_serialize_state(wasm_exec_env_t exec_env,
+                           uint8_t *buffer,
+                           uint32_t buffer_size);
+
+/**
+ * シリアライズされた状態からデシリアライズ
+ *
+ * @param buffer シリアライズされたデータ
+ * @param buffer_size バッファサイズ
+ * @param exec_env_out 復元された実行環境へのポインタを格納
+ *
+ * @return 成功した場合はtrue
+ */
+WASM_RUNTIME_API_EXTERN bool
+wasm_runtime_deserialize_state(const uint8_t *buffer,
+                             uint32_t buffer_size,
+                             wasm_exec_env_t *exec_env_out);
+
 #ifdef __cplusplus
 }
 #endif
