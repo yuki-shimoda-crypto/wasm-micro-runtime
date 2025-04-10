@@ -1698,7 +1698,15 @@ wasm_interp_call_func_bytecode(WASMModuleInstance *module,
                 goto got_exception;
             }
 
-            HANDLE_OP(WASM_OP_NOP) { HANDLE_OP_END(); }
+            HANDLE_OP(WASM_OP_NOP) 
+            { 
+                /* シリアライズフックをチェック */
+                if (wasm_serialize_check_hook(exec_env)) {
+                    /* シリアライズが実行された場合の処理 */
+                    /* 最小実装では何もしない */
+                }
+                HANDLE_OP_END(); 
+            }
 
 #if WASM_ENABLE_EXCE_HANDLING != 0
             HANDLE_OP(WASM_OP_RETHROW)

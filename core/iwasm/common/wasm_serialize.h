@@ -36,8 +36,8 @@ typedef struct wasm_serialized_state_t {
 } wasm_serialized_state_t;
 
 /* 
- * Note: コールバック関数の型定義は wasm_export.h にあるため、
- * 重複定義を避けるためこちらでは定義しません
+ * シリアライズコールバック関数の型定義は wasm_export.h にあります
+ * typedef bool (*wasm_runtime_serialize_callback_f)(wasm_exec_env_t exec_env, void *user_data);
  */
 
 #ifdef __cplusplus

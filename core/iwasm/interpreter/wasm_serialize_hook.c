@@ -5,9 +5,15 @@
 
 #include "wasm_serialize_hook.h"
 #include "../common/wasm_serialize.h"
+#include "../common/wasm_exec_env.h"
+#include "../common/wasm_runtime_common.h"
 
 /* シリアライズフックが有効かどうかを示すフラグ */
 static bool serialize_hook_enabled = false;
+
+/* コールバック関数とユーザーデータ */
+static wasm_runtime_serialize_callback_f serialize_callback = NULL;
+static void *serialize_user_data = NULL;
 
 /**
  * インタープリタフックの初期化
@@ -19,11 +25,12 @@ static bool serialize_hook_enabled = false;
 bool
 wasm_serialize_init_hook(WASMExecEnv *exec_env)
 {
-    /* 最小実装: 常に成功を返す */
     if (!exec_env)
         return false;
 
     serialize_hook_enabled = false;
+    serialize_callback = NULL;
+    serialize_user_data = NULL;
     return true;
 }
 
@@ -36,9 +43,25 @@ wasm_serialize_init_hook(WASMExecEnv *exec_env)
 void
 wasm_serialize_enable_hook(WASMExecEnv *exec_env, bool enable)
 {
-    /* フックを有効/無効化する */
     (void)exec_env;
     serialize_hook_enabled = enable;
+}
+
+/**
+ * シリアライズコールバックを登録
+ *
+ * @param exec_env 実行環境
+ * @param callback コールバック関数
+ * @param user_data ユーザーデータ
+ */
+void
+wasm_serialize_register_callback(WASMExecEnv *exec_env,
+                               wasm_runtime_serialize_callback_f callback,
+                               void *user_data)
+{
+    (void)exec_env;
+    serialize_callback = callback;
+    serialize_user_data = user_data;
 }
 
 /**
@@ -52,11 +75,41 @@ wasm_serialize_enable_hook(WASMExecEnv *exec_env, bool enable)
 bool
 wasm_serialize_check_hook(WASMExecEnv *exec_env)
 {
-    /* 最小実装: コールバックを呼び出すかチェックするロジックを追加 */
-    if (!exec_env || !serialize_hook_enabled)
+    uint8_t *buffer;
+    uint32_t buffer_size;
+    uint32_t serialized_size;
+    bool ret = false;
+
+    if (!exec_env || !serialize_hook_enabled || !serialize_callback)
         return false;
 
-    /* ここに将来的にコールバック呼び出しロジックを追加 */
-    /* exec_envからユーザーデータを取得し、コールバックを呼び出す */
-    return false;
+    /* コールバックを呼び出してシリアライズが必要かチェック */
+    if (!serialize_callback((wasm_exec_env_t)exec_env, serialize_user_data))
+        return false;
+
+    /* ここからシリアライズを実行 */
+    
+    /* 必要なバッファサイズを取得 */
+    serialized_size = wasm_runtime_serialize_state((wasm_exec_env_t)exec_env, 
+                                             NULL, 0);
+    if (serialized_size == 0)
+        return false;
+        
+    /* バッファを確保 */
+    buffer = wasm_runtime_malloc(serialized_size);
+    if (!buffer)
+        return false;
+        
+    /* シリアライズを実行 */
+    if (wasm_runtime_serialize_state((wasm_exec_env_t)exec_env, 
+                                buffer, serialized_size) > 0) {
+        /* シリアライズに成功 - ここで保存や転送の処理を行うこともできます */
+        /* 最小実装では、成功のみを返します */
+        ret = true;
+    }
+    
+    /* バッファを解放 */
+    wasm_runtime_free(buffer);
+    
+    return ret;
 } 
