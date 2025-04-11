@@ -172,4 +172,18 @@ wasm_runtime_enable_serialize_hook(wasm_exec_env_t exec_env, bool enable)
         /* フックを有効/無効化する */
         wasm_serialize_enable_hook(exec_env, enable);
     }
+}
+
+/**
+ * シリアライズに必要なバッファサイズを取得
+ *
+ * @param exec_env 実行環境インスタンス
+ *
+ * @return シリアライズに必要なバイト数、失敗した場合は0
+ */
+uint32_t
+wasm_runtime_get_serialize_buffer_size(wasm_exec_env_t exec_env)
+{
+    /* NULLバッファでシリアライズを呼び出すとサイズのみを計算する */
+    return wasm_runtime_serialize_state(exec_env, NULL, 0);
 } 

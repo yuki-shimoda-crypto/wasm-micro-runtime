@@ -2407,6 +2407,39 @@ wasm_runtime_deserialize_state(const uint8_t *buffer,
                              uint32_t buffer_size,
                              wasm_exec_env_t *exec_env_out);
 
+/**
+ * シリアライズ状態のためにフックを有効または無効にする
+ *
+ * @param exec_env 実行環境
+ * @param enable trueの場合はフックを有効化、falseの場合は無効化
+ */
+WASM_RUNTIME_API_EXTERN void
+wasm_runtime_enable_serialize_hook(wasm_exec_env_t exec_env, bool enable);
+
+/**
+ * シリアライズに必要なバッファサイズを取得
+ *
+ * @param exec_env 実行環境
+ *
+ * @return シリアライズに必要なバイト数、失敗した場合は0
+ */
+WASM_RUNTIME_API_EXTERN uint32_t
+wasm_runtime_get_serialize_buffer_size(wasm_exec_env_t exec_env);
+
+/**
+ * WebAssemblyインスタンス状態をシリアライズする
+ *
+ * @param exec_env 実行環境
+ * @param buffer 出力バッファ
+ * @param buffer_size バッファサイズ
+ *
+ * @return 成功した場合はシリアライズされたデータのサイズ、失敗した場合は0
+ */
+WASM_RUNTIME_API_EXTERN uint32_t
+wasm_runtime_serialize_state(wasm_exec_env_t exec_env,
+                           uint8_t *buffer,
+                           uint32_t buffer_size);
+
 #ifdef __cplusplus
 }
 #endif

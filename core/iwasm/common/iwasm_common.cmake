@@ -99,6 +99,7 @@ endif ()
 set (IWASM_SERIALIZE_DIR ${CMAKE_CURRENT_LIST_DIR})
 set (IWASM_SERIALIZE_FILES
     ${IWASM_SERIALIZE_DIR}/wasm_serialize.c
+    ${IWASM_SERIALIZE_DIR}/wasm_serialize_file.c
     ${IWASM_COMMON_DIR}/../interpreter/wasm_serialize_hook.c)
 set (source_all ${source_all} ${IWASM_SERIALIZE_FILES})
 
